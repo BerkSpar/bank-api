@@ -2,7 +2,31 @@ const database = require('../database/connection')
 
 class BankController {
     deposita(request, response) {
-        response.send('Em implementação...')
+        const {usuario_id, valor} = request.body
+
+        if(usuario_id == undefined || valor == undefined) {
+            response.json({message: "Houve um erro ao receber os valores"})
+            return 
+        }
+         
+        const sql = 
+            `INSERT INTO movimentacao (
+                valor,
+                tipo_movimento,
+                usuario_id,
+                data
+            ) VALUES (
+                ${valor},
+                'DEPÓSITO',
+                ${usuario_id},
+                now()
+            );` 
+
+        database.query(sql, (e, data) => {
+            if(e) throw e
+
+            response.json({message: 'Depositado com sucesso!'})
+        })
     }
 
     saque(request, response) {
