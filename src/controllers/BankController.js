@@ -46,7 +46,16 @@ class BankController {
     }
 
     movimentacao(request, response) {
-        response.send('Em implementação...')
+        if(request.query.usuario_id == undefined){
+            response.json({message: "Houve um erro ao receber os valores"})
+            return 
+        }
+
+        const sql = `SELECT * FROM movimentacao WHERE usuario_id = ${request.query.usuario_id}`
+
+        database.query(sql, (e, data) => {
+            response.json(data)
+        })
     }
 }
 
