@@ -124,8 +124,36 @@ class BankController {
         }
     }
 
-    transferencia(request, response) {
-        response.send('Em implementação...')
+    async transferencia(request, response) {
+        const { usuario_id, valor } = request.body
+
+        if (usuario_id == undefined || valor == undefined) {
+            response.json({ message: "Houve um erro ao receber os valores" })
+            return
+        }
+
+        var usuario = {}
+        try {
+            usuario = await getUsuario(usuario_id)
+        } catch (error) {
+            response.json({ message: error.sqlMessage })
+            return
+        }
+
+        if (usuario.saldo - valor <= 0) {
+            response.json({ message: 'Saldo inválido' })
+            return
+        }
+
+        const sql = `UPDATE usuario SET saldo = (saldo - ${valor}) WHERE id = ${usuario_id}`
+        try {
+            await database.execute(sql)
+            await geraMovimentacao(usuario_id, valor, 'TRANSFERENCIA')
+
+            response.json({ message: 'Transferência realizada com sucesso' })
+        } catch (error) {
+            response.json({ message: error.sqlMessage })
+        }
     }
 
     async info(request, response) {
