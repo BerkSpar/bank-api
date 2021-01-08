@@ -10,5 +10,5 @@ app.use(router)
 app.listen(4000, () => {})
 
 app.get('/', (request, response) => {
-    response.send('Hello World!')
+    response.json({message: 'Bem vindo ao Oxente Bank!'})
 })
