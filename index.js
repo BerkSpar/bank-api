@@ -10,5 +10,5 @@ app.use(router)
 app.listen(process.env.PORT || 4000, () => { })
 
 app.get('/', (request, response) => {
-    response.json({ message: 'Oxente! Venha usar o Oxente Bank e lucrar como nunca antes!' })
+    response.send('Oxente! Venha usar o Oxente Bank e lucrar como nunca antes!')
 })
