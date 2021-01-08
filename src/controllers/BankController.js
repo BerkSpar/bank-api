@@ -1,15 +1,15 @@
 const database = require('../database/connection')
 
 class BankController {
-    deposita(request, response) {
-        const {usuario_id, valor} = request.body
+    async deposita(request, response) {
+        const { usuario_id, valor } = request.body
 
-        if(usuario_id == undefined || valor == undefined) {
-            response.json({message: "Houve um erro ao receber os valores"})
-            return 
+        if (usuario_id == undefined || valor == undefined) {
+            response.json({ message: "Houve um erro ao receber os valores" })
+            return
         }
-         
-        const sql = 
+
+        const sql =
             `INSERT INTO movimentacao (
                 valor,
                 tipo_movimento,
@@ -20,13 +20,17 @@ class BankController {
                 'DEPÓSITO',
                 ${usuario_id},
                 now()
-            );` 
+            );`
 
-        database.query(sql, (e, data) => {
-            if(e) throw e
 
-            response.json({message: 'Depositado com sucesso!'})
-        })
+        try {
+            const rows = await database.query(sql)
+
+            response.json({ message: 'Depositado com sucesso!' })
+        } catch (error) {
+            response.json({ message: error.sqlMessage })
+        }
+
     }
 
     saque(request, response) {
@@ -41,30 +45,38 @@ class BankController {
         response.send('Em implementação...')
     }
 
-    info(request, response) {
-        if(request.query.usuario_id == undefined){
-            response.json({message: "Houve um erro ao receber os valores"})
-            return 
+    async info(request, response) {
+        if (request.query.usuario_id == undefined) {
+            response.json({ message: "Houve um erro ao receber os valores" })
+            return
         }
 
-        const sql = `SELECT * FROM usuario WHERE id = ${request.query.usuario_id}`
+        try {
+            const sql = `SELECT * FROM usuario WHERE id = ${request.query.usuario_id}`
 
-        database.query(sql, (e, data) => {
-            response.json(data)
-        })
+            const rows = await database.query(sql)
+
+            response.json(rows[0])
+        } catch (error) {
+            response.json({ message: error.sqlMessage })
+        }
     }
 
-    movimentacao(request, response) {
-        if(request.query.usuario_id == undefined){
-            response.json({message: "Houve um erro ao receber os valores"})
-            return 
+    async movimento(request, response) {
+        if (request.query.usuario_id == undefined) {
+            response.json({ message: "Houve um erro ao receber os valores" })
+            return
         }
 
-        const sql = `SELECT * FROM movimentacao WHERE usuario_id = ${request.query.usuario_id}`
+        try {
+            const sql = `SELECT * FROM movimentacaso WHERE usuario_id = ${request.query.usuario_id}`
 
-        database.query(sql, (e, data) => {
-            response.json(data)
-        })
+            const rows = await database.query(sql)
+
+            response.json(rows[0])
+        } catch (error) {
+            response.json({ message: error.sqlMessage })
+        }
     }
 }
 

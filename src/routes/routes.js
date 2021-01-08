@@ -8,6 +8,6 @@ router.post('/saque', BankController.saque)
 router.post('/pagamento', BankController.pagamento)
 router.post('/transferencia', BankController.transferencia)
 router.get('/info', BankController.info)
-router.get('/movimento', BankController.movimentacao)
+router.get('/movimento', BankController.movimento)
 
 module.exports = router
