@@ -43,6 +43,7 @@ class BankController {
         const { usuario_id, valor } = request.body
 
         if (usuario_id == undefined || valor == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -53,6 +54,7 @@ class BankController {
             await database.execute(sql)
             await geraMovimentacao(usuario_id, valor, 'DEPOSITO')
 
+            response.status(200)
             response.json({ message: 'Depositado com sucesso!' })
         } catch (error) {
             response.json({ message: error.sqlMessage })
@@ -64,6 +66,7 @@ class BankController {
         const { usuario_id, valor } = request.body
 
         if (usuario_id == undefined || valor == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -72,11 +75,13 @@ class BankController {
         try {
             usuario = await getUsuario(usuario_id)
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
             return
         }
 
         if (usuario.saldo - valor <= 0) {
+            response.status(400)
             response.json({ message: 'Saldo inválido' })
             return
         }
@@ -86,8 +91,10 @@ class BankController {
             await database.execute(sql)
             await geraMovimentacao(usuario_id, valor, 'SAQUE')
 
+            response.status(200)
             response.json({ message: 'Saque realizado com sucesso' })
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
         }
     }
@@ -96,6 +103,7 @@ class BankController {
         const { usuario_id, valor, codigo } = request.body
 
         if (usuario_id == undefined || valor == undefined || codigo == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -104,11 +112,13 @@ class BankController {
         try {
             usuario = await getUsuario(usuario_id)
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
             return
         }
 
         if (usuario.saldo - valor <= 0) {
+            response.status(400)
             response.json({ message: 'Saldo inválido' })
             return
         }
@@ -118,8 +128,10 @@ class BankController {
             await database.execute(sql)
             await geraMovimentacao(usuario_id, valor, 'PAGAMENTO', `Código do boleto: ${codigo}`)
 
+            response.status(200)
             response.json({ message: 'Pagamento realizado com sucesso' })
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
         }
     }
@@ -128,6 +140,7 @@ class BankController {
         const { usuario_id, valor } = request.body
 
         if (usuario_id == undefined || valor == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -136,11 +149,13 @@ class BankController {
         try {
             usuario = await getUsuario(usuario_id)
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
             return
         }
 
         if (usuario.saldo - valor <= 0) {
+            response.status(400)
             response.json({ message: 'Saldo inválido' })
             return
         }
@@ -150,14 +165,17 @@ class BankController {
             await database.execute(sql)
             await geraMovimentacao(usuario_id, valor, 'TRANSFERENCIA')
 
+            response.status(200)
             response.json({ message: 'Transferência realizada com sucesso' })
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
         }
     }
 
     async info(request, response) {
         if (request.query.usuario_id == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -167,14 +185,17 @@ class BankController {
 
             const rows = await database.query(sql)
 
+            response.status(200)
             response.json(rows[0][0])
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
         }
     }
 
     async movimento(request, response) {
         if (request.query.usuario_id == undefined) {
+            response.status(400)
             response.json({ message: "Houve um erro ao receber os valores" })
             return
         }
@@ -184,8 +205,10 @@ class BankController {
 
             const rows = await database.query(sql)
 
+            response.status(200)
             response.json(rows[0])
         } catch (error) {
+            response.status(400)
             response.json({ message: error.sqlMessage })
         }
     }
